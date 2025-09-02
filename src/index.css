@@ -1,0 +1,62 @@
+/* --- GLOBAL DESIGN TOKENS --- */
+:root {
+  /* A modern blue for primary actions and highlights */
+  --color-primary: #007BFF; 
+  --color-primary-light: #52a9ff;
+
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --border-radius: 8px;
+}
+
+/* --- DARK THEME (DEFAULT) --- */
+body.dark {
+  --color-background: #121212; /* A deep, soft black */
+  --color-surface: #1e1e1e;   /* For cards, navbars, etc. */
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a0a0a0;
+  --color-border: #333333;
+}
+
+/* --- LIGHT THEME --- */
+body.light {
+  --color-background: #f4f7f9; /* A very light grey */
+  --color-surface: #ffffff;
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #566573;
+  --color-border: #e1e4e8;
+}
+
+/* --- GLOBAL STYLES --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+    overflow-x: hidden; 
+  /* Smooth transitions for theme changes */
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  /* Better font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scrolling for the whole page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Basic styles for links and buttons */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+}

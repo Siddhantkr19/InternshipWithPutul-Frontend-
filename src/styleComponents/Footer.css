@@ -1,0 +1,33 @@
+.footer-container {
+  padding: 3rem 2rem; /* More vertical padding */
+  text-align: center;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  margin-top: 4rem;
+}
+
+/* --- New Styles for Social Links --- */
+.footer-social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* Space between icons */
+  margin-bottom: 1.5rem;
+}
+
+.footer-social-links a {
+  color: var(--color-text-secondary);
+  font-size: 1.8rem; /* Make icons larger */
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social-links a:hover {
+  color: var(--color-primary); /* Change color on hover */
+  transform: scale(1.2); /* Slightly enlarge icon on hover */
+}
+/* --- --- */
+
+.footer-copyright {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}

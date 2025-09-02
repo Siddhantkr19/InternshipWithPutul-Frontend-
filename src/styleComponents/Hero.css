@@ -1,0 +1,92 @@
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 4rem; /* Increased gap for better spacing */
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.hero-image-container {
+  flex-shrink: 0;
+}
+
+.hero-image {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Using new theme variables */
+  border: 7px solid var(--color-primary);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hero-text-container {
+  max-width: 600px;
+}
+
+.hero-title {
+  font-size: 3.6rem; /* Slightly larger for more impact */
+  font-weight: 800; /* Bolder */
+  margin-bottom: 3.0rem;
+  line-height: 1.2;
+  /* Using new theme variable */
+  color: #4fdee9;
+   min-height: 13.0rem; 
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  /* Using secondary text color for a softer look */
+  color: #ff70d1;
+  line-height: 1.6;
+}
+
+.hero-button {
+  padding: 1rem 2rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-button:hover {
+  transform: translateY(-3px); /* Add a subtle lift effect */
+  background-color: var(--color-primary-light);
+}
+
+/* --- ADD THIS SECTION FOR RESPONSIVENESS --- */
+@media (max-width: 992px) {
+  .hero-container {
+    gap: 2rem;
+  }
+  .hero-title {
+    font-size: 2.8rem;
+  }
+  .hero-image {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column; /* Stack image on top of text */
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-image {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 1rem;
+  }
+}

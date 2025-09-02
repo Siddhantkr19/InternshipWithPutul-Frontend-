@@ -1,0 +1,63 @@
+/* --- Main Layout --- */
+.about-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rem;
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 4rem auto;
+  /* Using the new theme variables */
+  /* background-color: var(--color-surface); */
+  /* border: 1px solid var(--color-border); */
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s ease;
+  
+}
+
+.about-text-container {
+  max-width: 600px;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  /* Using the new primary color */
+  color: var(--color-primary);
+}
+
+.about-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  /* Using the secondary text color for a softer look */
+  color: #ff70d1;
+}
+
+/* --- Image Styling --- */
+.about-image {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid var(--color-primary);
+}
+
+/* --- Responsive Design (Unchanged as it's already good) --- */
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-image {
+    width: 200px;
+    height: 200px;
+  }
+}
