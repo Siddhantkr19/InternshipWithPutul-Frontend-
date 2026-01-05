@@ -1,62 +1,70 @@
-/* --- GLOBAL DESIGN TOKENS --- */
+@import "tailwindcss";
+
+/* INDUSTRY STANDARD: THEME DEFINITIONS
+  We define two themes: "Glacier" (Default) and "Harvest".
+*/
+
 :root {
-  /* A modern blue for primary actions and highlights */
-  --color-primary: #007BFF; 
-  --color-primary-light: #52a9ff;
-
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --border-radius: 8px;
+  /* =========================================
+     DEFAULT THEME: GLACIER (Cool Blues)
+     Best for: Tech, Professional, Calm
+     ========================================= */
+  --color-primary: #0ea5e9;       /* Sky-500 (The Bright "Glacier" Blue) */
+  --color-primary-hover: #0284c7; /* Sky-600 (Darker for hover) */
+  
+  --color-secondary: #3b82f6;     /* Blue-500 (Deep Blue accent) */
+  
+  --color-text-main: #0f172a;     /* Slate-900 */
+  --color-text-muted: #475569;    /* Slate-600 */
+  --color-bg-light: #f8fafc;      /* Slate-50 */
 }
 
-/* --- DARK THEME (DEFAULT) --- */
-body.dark {
-  --color-background: #121212; /* A deep, soft black */
-  --color-surface: #1e1e1e;   /* For cards, navbars, etc. */
-  --color-text-primary: #e0e0e0;
-  --color-text-secondary: #a0a0a0;
-  --color-border: #333333;
+/* =========================================
+   OPTIONAL THEME: HARVEST (Warm Oranges)
+   Best for: Autumn, Energy, Creativity
+   To use this: Add class="theme-harvest" to your <body> tag
+   ========================================= */
+.theme-harvest {
+  --color-primary: #f97316;       /* Orange-500 (Bright Pumpkin) */
+  --color-primary-hover: #ea580c; /* Orange-600 (Burnt Orange) */
+  
+  --color-secondary: #eab308;     /* Yellow-500 (Golden Harvest) */
+  
+  --color-text-main: #271c19;     /* Dark Brown/Black */
+  --color-text-muted: #78350f;    /* Amber-900 (Muted Brown) */
+  --color-bg-light: #fff7ed;      /* Orange-50 (Warm White) */
 }
 
-/* --- LIGHT THEME --- */
-body.light {
-  --color-background: #f4f7f9; /* A very light grey */
-  --color-surface: #ffffff;
-  --color-text-primary: #2c3e50;
-  --color-text-secondary: #566573;
-  --color-border: #e1e4e8;
+@theme {
+  /* Link Tailwind utilities to these variables */
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-secondary: var(--color-secondary);
+  
+  --color-text-main: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
+  --color-bg-light: var(--color-bg-light);
+}
+/* ANIMATIONS */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* --- GLOBAL STYLES --- */
-*, *::before, *::after {
-  box-sizing: border-box;
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-family);
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
-    overflow-x: hidden; 
-  /* Smooth transitions for theme changes */
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  /* Better font rendering */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Optional: Add a smooth hover float for cards */
+.hover-float {
+  transition: transform 0.3s ease;
 }
-
-/* Smooth scrolling for the whole page */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Basic styles for links and buttons */
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-button {
-  font-family: var(--font-family);
-  cursor: pointer;
+.hover-float:hover {
+  transform: translateY(-5px);
 }
