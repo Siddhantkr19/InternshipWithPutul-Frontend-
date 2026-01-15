@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import InternshipCard from '../components/InternshipCard';
+import apiPublic from '../services/apiPublic';
 // 1. Import Dummy Data and Icon
 import { DUMMY_JOBS } from '../data/dummyData';
 import { FaSearch } from 'react-icons/fa';
@@ -12,8 +13,10 @@ const JobListing = () => {
   const [searchTerm, setSearchTerm] = useState(''); // 2. Search State
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios.get(`${API_URL}/api/jobs`)
+useEffect(() => {
+    // UPDATED: Use apiPublic.get() instead of axios.get()
+    // No need for `${API_URL}` anymore, it's inside apiPublic
+    apiPublic.get('/api/jobs') 
       .then(res => {
         const data = Array.isArray(res.data) && res.data.length > 0 ? res.data : DUMMY_JOBS;
         setJobs(data);
@@ -21,7 +24,7 @@ const JobListing = () => {
       .catch(() => setJobs(DUMMY_JOBS))
       .finally(() => setLoading(false));
   }, []);
-
+  
   // 3. Filter Logic (Matches Role, Company, or Location)
   const filteredJobs = jobs.filter(item => 
     item.role.toLowerCase().includes(searchTerm.toLowerCase()) ||

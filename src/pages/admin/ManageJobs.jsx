@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 // Correct import path for the component
 import InternshipForm from '../../components/InternshipForm'; 
+import apiAdmin from '../../services/apiAdmin';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,21 +17,19 @@ const ManageJobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/jobs`);
+      // UPDATED: Use apiAdmin.get()
+      const response = await apiAdmin.get('/api/jobs');
       setJobs(response.data);
     } catch (error) {
       console.error("Failed to fetch jobs", error);
     }
   };
 
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this job?')) {
+    if (window.confirm('Are you sure?')) {
       try {
-        await api.delete(`/jobs/${id}`);
+        // UPDATED: Use apiAdmin.delete()
+        await apiAdmin.delete(`/api/jobs/${id}`);
         fetchJobs(); 
       } catch (error) {
         console.error('Failed to delete job', error);
