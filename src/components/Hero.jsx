@@ -61,17 +61,14 @@ const Hero = () => {
               alt="Putul Kumari" 
               className="relative w-64 h-64 md:w-96 md:h-96 rounded-full object-cover border-4 border-white shadow-2xl" 
             />
-            
-            {/* Floating Badge (Optional) */}
-            <div className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-bounce-slow">
-              <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-              <span className="text-sm font-bold text-gray-700">Open to Work</span>
+  
+             
             </div>
           </div>
         </div>
 
       </div>
-    </div>
+ 
   );
 };
 

@@ -1,51 +1,62 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaBriefcase, FaUsers, FaEnvelope, FaBuilding } from 'react-icons/fa';
+import { 
+  FaChartPie, FaBriefcase, FaLaptopCode, FaUsers, FaEnvelope, FaSignOutAlt 
+} from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext'; // ✅ USE CONTEXT
 
 const Sidebar = () => {
+  const { logout } = useAuth(); // Get logout function
+
+  const menuItems = [
+    { path: '/admin/dashboard', name: 'Overview', icon: <FaChartPie /> },
+    { path: '/admin/dashboard/internships', name: 'Internships', icon: <FaLaptopCode /> },
+    { path: '/admin/dashboard/jobs', name: 'Jobs', icon: <FaBriefcase /> },
+    { path: '/admin/dashboard/users', name: 'Users', icon: <FaUsers /> },
+    { path: '/admin/dashboard/messages', name: 'Messages', icon: <FaEnvelope /> },
+  ];
+
   return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col h-full shadow-xl transition-all duration-300">
+    <div className="w-64 bg-white h-screen border-r border-gray-200 flex flex-col fixed left-0 top-0 z-10">
       
-      {/* Sidebar Header */}
-      <div className="h-16 flex items-center justify-center border-b border-slate-800">
-        <h2 className="text-xl font-bold tracking-wider">
-          Admin<span className="text-blue-500">Panel</span>
-        </h2>
+      {/* Header */}
+      <div className="h-16 flex items-center justify-center border-b border-gray-100">
+        <h1 className="text-2xl font-bold text-blue-600 tracking-wide">ADMIN<span className="text-gray-400">PANEL</span></h1>
       </div>
-      
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
-        <NavItem to="/admin/dashboard" icon={<FaHome />} label="Overview" end />
-        <NavItem to="/admin/dashboard/internships" icon={<FaBuilding />} label="Internships" />
-        <NavItem to="/admin/dashboard/jobs" icon={<FaBriefcase />} label="Jobs" />
-        <NavItem to="/admin/dashboard/users" icon={<FaUsers />} label="Users" />
-        <NavItem to="/admin/dashboard/messages" icon={<FaEnvelope />} label="Messages" />
+
+      {/* Menu */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.path === '/admin/dashboard'}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                isActive
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                  : 'text-gray-500 hover:bg-gray-50 hover:text-blue-600'
+              }`
+            }
+          >
+            <span className="text-lg">{item.icon}</span>
+            <span>{item.name}</span>
+          </NavLink>
+        ))}
       </nav>
 
-      {/* Sidebar Footer */}
-      <div className="p-4 border-t border-slate-800 text-center">
-        <p className="text-xs text-slate-500">v2.0.0 Pro Dashboard</p>
+      {/* Footer / Logout */}
+      <div className="p-4 border-t border-gray-100">
+        <button 
+          onClick={logout} // ✅ Calls context logout
+          className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors font-medium"
+        >
+          <FaSignOutAlt />
+          <span>Logout</span>
+        </button>
       </div>
-    </aside>
+    </div>
   );
 };
-
-// Helper Component for cleaner code
-const NavItem = ({ to, icon, label, end }) => (
-  <NavLink 
-    to={to} 
-    end={end}
-    className={({ isActive }) => 
-      `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${
-        isActive 
-          ? "bg-blue-600 text-white shadow-lg translate-x-1" 
-          : "text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-1"
-      }`
-    }
-  >
-    <span className="text-xl">{icon}</span>
-    <span>{label}</span>
-  </NavLink>
-);
 
 export default Sidebar;

@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { FaArrowLeft, FaBuilding, FaMoneyBillWave, FaClock, FaBell, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
-import apiAdmin from '../services/apiAdmin'; // Use this for authenticated calls
-import apiPublic from '../services/apiPublic'; // Use this for public fetching
+import { FaArrowLeft, FaBell, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
+import apiAdmin from '../services/apiAdmin'; 
+import apiPublic from '../services/apiPublic'; 
 import { DUMMY_INTERNSHIPS, DUMMY_JOBS } from '../data/dummyData';
+import Toast from '../components/Toast'; 
+import { useAuth } from '../context/AuthContext'; // ✅ Use Context
 
 const DetailsPage = () => {
+  const { user } = useAuth(); // ✅ Get current user directly from context
   const { type, id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false); // UI Feedback
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [toast, setToast] = useState(null); 
   const navigate = useNavigate();
 
   const isJob = type === 'job';
-  const isLoggedIn = !!localStorage.getItem('jwtToken'); // Check if user is logged in
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         const endpoint = isJob ? 'jobs' : 'internships';
-        const response = await apiPublic.get(`/api/${endpoint}`); // Use apiPublic
+        const response = await apiPublic.get(`/api/${endpoint}`);
         
         let foundItem = Array.isArray(response.data) 
           ? response.data.find(item => item.id.toString() === id)
@@ -42,45 +44,27 @@ const DetailsPage = () => {
     fetchDetail();
   }, [type, id, isJob]);
 
-  // --- NEW: Smart Alert Handler ---
+  // --- NEW: Smart Alert Handler using Context ---
   const handleEnableAlerts = async () => {
-    if (!isLoggedIn) {
-      // If not logged in, send them to signup with INTENT
+    // 1. Check Context User instead of LocalStorage
+    if (!user) {
       navigate(`/signup?alert=${isJob ? 'JOB' : 'INTERNSHIP'}`);
       return;
     }
 
-    // If logged in, call API directly
     setSubscribing(true);
     try {
-      const payload = {
-        notifyForJobs: isJob, // Enable current type
-        notifyForInternships: !isJob // Enable current type
-      };
-      
-      // We pass BOTH as true/false. 
-      // NOTE: A better backend logic would be to "merge" preferences, 
-      // but for now, let's enable the one they clicked.
-      
-      // Let's assume we want to turn ON the specific preference without disabling the other.
-      // Ideally, you'd fetch user data first, but let's send a specific flag if your backend supports partial updates.
-      // Since your backend uses `setNotifyForJobs(jobs)`, we need to be careful not to overwrite the other setting to false.
-      // For V1, let's just enable the one they clicked.
-      
-      // PRO TIP: Modify backend to accept partial updates or fetch current user first.
-      // For now, let's assume the user wants this specific alert ON.
-      
-      // Simplified for this step: Just send the request (Back-end logic handles the update)
+      // 2. Call API (Backend now identifies user by Email in token)
       await apiAdmin.put('/user/preferences', { 
         [isJob ? 'notifyForJobs' : 'notifyForInternships']: true 
       });
 
       setIsSubscribed(true);
-      alert(`Success! You will now receive ${isJob ? 'Job' : 'Internship'} alerts.`);
+      setToast({ message: `Success! Alerts enabled for ${isJob ? 'Jobs' : 'Internships'}.`, type: 'success' });
       
     } catch (error) {
       console.error("Failed to subscribe", error);
-      alert("Something went wrong. Please try again.");
+      setToast({ message: "Failed to enable alerts. Please try again.", type: 'error' });
     } finally {
       setSubscribing(false);
     }
@@ -91,8 +75,9 @@ const DetailsPage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        
         {/* Banner */}
         <div className={`p-8 text-white ${isJob ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-blue-500 to-cyan-500'}`}>
           <Link to="/" className="inline-flex items-center text-white/80 hover:text-white mb-4">
@@ -126,41 +111,32 @@ const DetailsPage = () => {
              </a>
           </div>
 
-          {/* Sidebar */}
           <div className="md:col-span-1">
              <div className="sticky top-24 space-y-6">
-                
-                {/* NOTIFICATION ALERT BOX */}
                 <div className="p-6 rounded-xl shadow-md bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100 text-center relative overflow-hidden">
                   <div className="relative z-10">
                     <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-blue-600 text-xl">
                       {isSubscribed ? <FaCheckCircle className="text-green-500" /> : <FaBell className="animate-swing" />}
                     </div>
-                    
                     <h4 className="font-bold text-gray-800 mb-2">
                       {isSubscribed ? "Alerts Enabled!" : "Never Miss an Update!"}
                     </h4>
-                    
                     {!isSubscribed && (
                       <p className="text-sm text-gray-600 mb-4">
                         Get instant emails for new {isJob ? 'jobs' : 'internships'}.
                       </p>
                     )}
-                    
                     <button 
                       onClick={handleEnableAlerts}
                       disabled={subscribing || isSubscribed}
                       className={`w-full py-2.5 font-bold rounded-lg transition-all shadow-md flex items-center justify-center gap-2 text-sm ${
-                        isSubscribed 
-                          ? 'bg-green-500 text-white cursor-default' 
-                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                        isSubscribed ? 'bg-green-500 text-white cursor-default' : 'bg-blue-600 text-white hover:bg-blue-700'
                       }`}
                     >
                       {subscribing ? 'Processing...' : isSubscribed ? 'Subscribed' : <><FaUserPlus /> Enable Alerts</>}
                     </button>
                   </div>
                 </div>
-
              </div>
           </div>
         </div>
