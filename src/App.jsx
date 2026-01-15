@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute'; 
-
+import ResetPassword from './pages/ResetPassword';
 // Public Pages
 import HomePage from './pages/HomePage';
 import InternshipListing from './pages/InternshipListing';
@@ -17,6 +17,7 @@ import Contact from './components/Contact';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage'; 
 import ForgotPassword from './pages/ForgotPassword';
+
 
 
 // Admin Components
@@ -39,6 +40,7 @@ function App() {
         <Route path="/details/:type/:id" element={<><Navbar /><div className="pt-20"><DetailsPage /><Footer /></div></>} />
         <Route path="/about" element={<><Navbar /><div className="pt-20"><About /><Footer /></div></>} />
         <Route path="/contact" element={<><Navbar /><div className="pt-20"><Contact /><Footer /></div></>} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* AUTH ROUTES */}
         <Route path="/login" element={<LoginPage />} />
