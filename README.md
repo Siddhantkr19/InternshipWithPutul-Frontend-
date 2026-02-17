@@ -4,7 +4,7 @@ This is the frontend for a modern, full-stack internship portal built with React
 
 It features a public-facing, single-page website for viewing internships and a secure, protected admin dashboard for managing all site content.
 
-**Live Demo**  - https://internshipwithputul.netlify.app/
+**Live Demo**  -https://iwp-pearl.vercel.app/
 
  ## Features
 
