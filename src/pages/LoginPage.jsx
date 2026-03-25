@@ -20,9 +20,16 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // ✅ Use Context Login (Handles Token & User State)
-      await login(formData.email, formData.password);
-      navigate('/admin/dashboard');
+      // ✅ Capture the returned user data
+      const loggedInUser = await login(formData.email, formData.password);
+      
+      // ✅ Route based on Role (handles both 'ADMIN' and 'ROLE_ADMIN' formats)
+      if (loggedInUser.role === 'ADMIN' || loggedInUser.role === 'ROLE_ADMIN') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/'); // Standard users go to the homepage!
+      }
+      
     } catch (err) {
       console.error("Login Error", err);
       setError("Invalid email or password.");

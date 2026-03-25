@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Admin/Protected API Client (Automatically attaches Token)
 const apiAdmin = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -8,12 +7,12 @@ const apiAdmin = axios.create({
   },
 });
 
-// Interceptor: Add Token to every request
+// 1. REQUEST INTERCEPTOR: Attach the token before sending
 apiAdmin.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('jwtToken');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`; // Must include 'Bearer '
     }
     return config;
   },
@@ -22,14 +21,22 @@ apiAdmin.interceptors.request.use(
   }
 );
 
-// Interceptor: Handle Token Expiration (401/403)
+// 2. RESPONSE INTERCEPTOR: Handle 401/403 errors
 apiAdmin.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      console.warn("Session expired or unauthorized. Logging out...");
-      localStorage.removeItem('jwtToken');
-      window.location.href = '/login'; // Redirect to login
+    if (error.response) {
+      if (error.response.status === 401) {
+        // Token is actually dead -> Log out
+        console.warn("Session expired. Logging out...");
+        localStorage.removeItem('jwtToken');
+        window.location.href = '/login'; 
+      } 
+      else if (error.response.status === 403) {
+        // Token is valid, but wrong role -> Send to home page
+        console.warn("Forbidden: You do not have Admin access.");
+        window.location.href = '/'; 
+      }
     }
     return Promise.reject(error);
   }

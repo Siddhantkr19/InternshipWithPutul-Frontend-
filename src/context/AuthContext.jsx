@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // 2. Login Function
+
   const login = async (email, password) => {
-    // Note: Backend DTO expects "username" field, so we map email -> username
     const response = await axios.post(`${API_URL}/api/auth/login`, { 
       username: email, 
       password 
@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }) => {
       token: token 
     });
     
-    return true;
+    // ✅ NEW: Return the decoded token so LoginPage can read the role
+    return decoded; 
   };
 
   // 3. Logout Function
