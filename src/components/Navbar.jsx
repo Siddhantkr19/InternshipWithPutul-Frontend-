@@ -1,114 +1,87 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext'; // ✅ USE CONTEXT
+import { useAuth } from '../context/AuthContext'; // ✅ Import Auth Context
 
 const Navbar = () => {
-  const { user, logout } = useAuth(); // Get user state
-  const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    setIsOpen(false);
-    navigate('/');
-  };
+  const [navOpen, setNavOpen] = useState(false);
+  const { user, logout } = useAuth(); // ✅ Get user state and logout function
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          
-          {/* Logo */}
-          <Link to="/" className="text-2xl font-bold text-blue-600 flex items-center gap-2">
-          <span className="bg-blue-600 text-white p-1 rounded-lg text-lg">IWP</span>
-            <span>InternshipWithPutul</span>
-          </Link>
+    <nav className="bg-white shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        
+        {/* Logo */}
+        <Link to="/" className="text-2xl font-bold text-blue-600">IWP</Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8 items-center">
-            <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Home</Link>
-            <Link to="/internships" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Internships</Link>
-            <Link to="/jobs" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Jobs</Link>
-            <Link to="/about" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">About</Link>
-            <Link to="/contact" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Contact</Link>
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center space-x-8">
+          <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium">Home</Link>
+          <Link to="/internships" className="text-gray-700 hover:text-blue-600 font-medium">Internships</Link>
+          <Link to="/jobs" className="text-gray-700 hover:text-blue-600 font-medium">Jobs</Link>
 
-            {/* DYNAMIC AUTH BUTTONS */}
-            {user ? (
-              <div className="flex items-center gap-4 ml-4">
-                {/* Show Admin Dashboard link if user is Admin */}
-                {user.role === 'ADMIN' && (
-                  <Link 
-                    to="/admin/dashboard" 
-                    className="text-blue-600 font-bold border border-blue-100 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                )}
-                
-                <button 
-                  onClick={handleLogout} 
-                  className="text-red-500 hover:text-red-700 flex items-center gap-2 font-medium"
-                >
-                  <FaSignOutAlt /> Logout
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-3 ml-4">
-                <Link to="/login" className="px-5 py-2 text-blue-600 font-bold border border-blue-600 rounded-full hover:bg-blue-50 transition-all">
-                  Login
-                </Link>
-                <Link to="/signup" className="px-5 py-2 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 shadow-md transition-all">
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 focus:outline-none text-2xl">
-              {isOpen ? <FaTimes /> : <FaBars />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
-          <div className="px-4 pt-2 pb-6 space-y-2">
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-lg">Home</Link>
-            <Link to="/internships" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-lg">Internships</Link>
-            <Link to="/jobs" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-gray-600 hover:bg-gray-50 rounded-lg">Jobs</Link>
-            
-            <div className="border-t border-gray-100 my-2"></div>
-
-            {user ? (
-              <>
-                {user.role === 'ADMIN' && (
-                  <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-blue-600 font-bold">
+          {/* ✅ CONDITIONAL RENDERING: Logged In vs Logged Out */}
+          {user ? (
+            <div className="relative group cursor-pointer flex items-center gap-2">
+              <FaUserCircle className="text-3xl text-blue-600" />
+              <span className="font-semibold text-gray-700">{user.email.split('@')[0]}</span>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-xl rounded-lg hidden group-hover:block border border-gray-100 overflow-hidden transition-all">
+                {/* Show Dashboard link if they are an Admin */}
+                {(user.role === 'ADMIN' || user.role === 'ROLE_ADMIN') && (
+                  <Link to="/admin/dashboard" className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b">
                     Admin Dashboard
                   </Link>
                 )}
                 <button 
-                  onClick={handleLogout}
-                  className="w-full text-left px-3 py-3 text-red-500 font-medium"
+                  onClick={logout} 
+                  className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium"
                 >
-                  Logout
+                  <FaSignOutAlt /> Logout
                 </button>
-              </>
-            ) : (
-              <div className="flex flex-col gap-3 mt-4">
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block w-full text-center px-4 py-3 border border-blue-600 text-blue-600 rounded-lg font-bold">
-                  Login
-                </Link>
-                <Link to="/signup" onClick={() => setIsOpen(false)} className="block w-full text-center px-4 py-3 bg-blue-600 text-white rounded-lg font-bold">
-                  Sign Up
-                </Link>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <Link to="/login" className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
+              Login
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Menu Button (Hamburger) */}
+        <div className="md:hidden">
+          <button onClick={() => setNavOpen(!navOpen)} className="text-gray-700 text-2xl focus:outline-none">
+            {navOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {navOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-inner">
+          <Link to="/" onClick={() => setNavOpen(false)} className="block text-gray-700 hover:text-blue-600 font-medium py-2">Home</Link>
+          <Link to="/internships" onClick={() => setNavOpen(false)} className="block text-gray-700 hover:text-blue-600 font-medium py-2">Internships</Link>
+          <Link to="/jobs" onClick={() => setNavOpen(false)} className="block text-gray-700 hover:text-blue-600 font-medium py-2">Jobs</Link>
+          
+          {user ? (
+             <div className="pt-4 border-t border-gray-100">
+               <div className="flex items-center gap-2 mb-4 text-gray-700 font-semibold">
+                  <FaUserCircle className="text-2xl text-blue-600" />
+                  {user.email}
+               </div>
+               {(user.role === 'ADMIN' || user.role === 'ROLE_ADMIN') && (
+                  <Link to="/admin/dashboard" className="block text-gray-700 py-2">Admin Dashboard</Link>
+               )}
+               <button onClick={() => { logout(); setNavOpen(false); }} className="w-full text-left py-2 text-red-600 font-medium flex items-center gap-2">
+                 <FaSignOutAlt /> Logout
+               </button>
+             </div>
+          ) : (
+             <Link to="/login" onClick={() => setNavOpen(false)} className="block w-full text-center px-6 py-3 bg-blue-600 text-white font-bold rounded-lg mt-4">
+              Login
+            </Link>
+          )}
         </div>
       )}
     </nav>

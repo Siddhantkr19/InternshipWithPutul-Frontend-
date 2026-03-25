@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom'; // ✅ Added useLocation
 import { FaLock, FaEnvelope, FaExclamationCircle } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext'; // ✅ Use Context
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
-  const { login } = useAuth(); // Get login function
+  const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ Get the current location object
+  
+  // ✅ Determine where to send the user after login (Fallback to Home '/')
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,14 +25,13 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // ✅ Capture the returned user data
       const loggedInUser = await login(formData.email, formData.password);
       
-      // ✅ Route based on Role (handles both 'ADMIN' and 'ROLE_ADMIN' formats)
+      // ✅ Admin goes to Dashboard, Normal User goes back to previous page
       if (loggedInUser.role === 'ADMIN' || loggedInUser.role === 'ROLE_ADMIN') {
         navigate('/admin/dashboard');
       } else {
-        navigate('/'); // Standard users go to the homepage!
+        navigate(from, { replace: true }); // Sends them back to where they were!
       }
       
     } catch (err) {
@@ -58,12 +62,7 @@ const LoginPage = () => {
           <div className="relative">
             <FaEnvelope className="absolute top-4 left-4 text-gray-400" />
             <input 
-              type="email" 
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Email Address" 
+              type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" 
               className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
             />
           </div>
@@ -72,29 +71,18 @@ const LoginPage = () => {
           <div className="relative">
             <FaLock className="absolute top-4 left-4 text-gray-400" />
             <input 
-              type="password" 
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Password" 
+              type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="Password" 
               className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
             />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md disabled:opacity-70"
-          >
+          <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md disabled:opacity-70">
             {loading ? 'Signing In...' : 'Login'}
           </button>
         </form>
         
         <div className="mt-6 text-center">
-           <Link to="/signup" className="text-blue-600 font-bold hover:underline">
-             Create an Account
-           </Link>
+           <Link to="/signup" className="text-blue-600 font-bold hover:underline">Create an Account</Link>
         </div>
       </div>
     </div>
