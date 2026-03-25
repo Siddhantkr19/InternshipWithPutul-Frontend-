@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'; // ✅ Consolidated imports
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaBell, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
 import apiAdmin from '../services/apiAdmin'; 
 import apiPublic from '../services/apiPublic'; 
 import { DUMMY_INTERNSHIPS, DUMMY_JOBS } from '../data/dummyData';
 import Toast from '../components/Toast'; 
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext'; // ✅ Use Context
+import { useLocation, useNavigate } from 'react-router-dom';
+
 
 const DetailsPage = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth(); // ✅ Get current user directly from context
   const { type, id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [toast, setToast] = useState(null); 
-  
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ Get the current page location
 
   const isJob = type === 'job';
 
@@ -46,26 +46,17 @@ const DetailsPage = () => {
     fetchDetail();
   }, [type, id, isJob]);
 
-  // ✅ NEW: Apply Button click handler
-  const handleApplyClick = (e) => {
-    if (!user) {
-      e.preventDefault(); // Stop the link from opening in a new tab
-      // User is not logged in! Send them to Login, but remember THIS page.
-      navigate('/login', { state: { from: location } });
-    }
-    // If they ARE logged in, we do nothing and let the <a> tag open normally.
-  };
-
-  // --- Smart Alert Handler ---
+  // --- NEW: Smart Alert Handler using Context ---
   const handleEnableAlerts = async () => {
+    // 1. Check Context User instead of LocalStorage
     if (!user) {
-      // ✅ Also remember location if they click "Enable Alerts" before logging in
-      navigate(`/login`, { state: { from: location } }); 
+      navigate(`/signup?alert=${isJob ? 'JOB' : 'INTERNSHIP'}`);
       return;
     }
 
     setSubscribing(true);
     try {
+      // 2. Call API (Backend now identifies user by Email in token)
       await apiAdmin.put('/user/preferences', { 
         [isJob ? 'notifyForJobs' : 'notifyForInternships']: true 
       });
@@ -117,14 +108,7 @@ const DetailsPage = () => {
                <p>{data.eligibility}</p>
              </div>
 
-             {/* ✅ CONNECTED TO handleApplyClick */}
-             <a 
-               href={data.applyLink || data.postUrl} 
-               target="_blank" 
-               rel="noopener noreferrer" 
-               onClick={handleApplyClick}
-               className={`block w-full text-center py-4 rounded-lg text-white font-bold text-lg shadow-lg transition hover:opacity-90 ${isJob ? 'bg-orange-600' : 'bg-blue-600'}`}
-             >
+             <a href={data.applyLink} target="_blank" rel="noopener noreferrer" className={`block w-full text-center py-4 rounded-lg text-white font-bold text-lg shadow-lg ${isJob ? 'bg-orange-600' : 'bg-blue-600'}`}>
                Apply Now &rarr;
              </a>
           </div>
